@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 galleryAddPic()
+                dialog.dismiss()
             } else if (options[item].equals("Choose from Gallery")) {
                 val pickPhoto = Intent(
                     Intent.ACTION_PICK,
