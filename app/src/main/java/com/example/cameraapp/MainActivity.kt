@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         val imgFile = File(currentPhotoPath)
         when (requestCode) {
-            3 -> if (resultCode == Activity.RESULT_OK) {
+            0 -> if (resultCode == Activity.RESULT_OK) {
                 val selectedImage = data?.data
                 click_image.setImageURI(selectedImage)
             }
