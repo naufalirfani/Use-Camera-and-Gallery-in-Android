@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.Html
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -35,6 +36,8 @@ class MainActivity : AppCompatActivity() {
             dispatchTakePictureIntent()
             btn_camera.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.colorAccent);
         }
+
+        //loadImageFromStorage()
     }
 
     val REQUEST_TAKE_PHOTO = 1
@@ -43,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         val options =
             arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
         val builder: AlertDialog.Builder = AlertDialog.Builder(this@MainActivity)
-        builder.setTitle("Add Photo!")
+        builder.setTitle(Html.fromHtml("<font color='#FF7F27'>Add Photo!</font>"))
         builder.setItems(options) { dialog, item ->
             if (options[item].equals("Take Photo")) {
                 Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
@@ -71,11 +74,9 @@ class MainActivity : AppCompatActivity() {
                 galleryAddPic()
                 dialog.dismiss()
             } else if (options[item].equals("Choose from Gallery")) {
-                val pickPhoto = Intent(
-                    Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                )
-                startActivityForResult(pickPhoto, 0)
+                val gallery =
+                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+                startActivityForResult(gallery, 2)
                 dialog.dismiss()
             } else if (options[item].equals("Cancel")) {
                 dialog.dismiss()
@@ -124,17 +125,18 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingSuperCall")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val imgFile = File(currentPhotoPath)
+        //super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            0 -> if (resultCode == Activity.RESULT_OK) {
+            2 -> if (resultCode == Activity.RESULT_OK) {
                 val selectedImage = data?.data
-                click_image.setImageURI(selectedImage)
+                val imageStream = selectedImage?.let { contentResolver.openInputStream(it) }
+                val bitmap = BitmapFactory.decodeStream(imageStream)
+                click_image.setImageBitmap(bitmap)
             }
             1 -> if (resultCode == Activity.RESULT_OK) {
+                val imgFile = File(currentPhotoPath)
                 val myBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
                 click_image.setImageBitmap(myBitmap)
-                saveToInternalStorage(myBitmap)
             }
         }
     }
@@ -162,11 +164,22 @@ class MainActivity : AppCompatActivity() {
         return directory.absolutePath
     }
 
-    private fun loadImageFromStorage(path: String) {
+    private fun loadImageFromStorage() {
+        val cw = ContextWrapper(applicationContext)
+        // path to /data/data/yourapp/app_data/imageDir
+        val directory = cw.getDir("imageDir", Context.MODE_PRIVATE)
+        val dirlist = directory.listFiles()
         try {
-            val f = File(path, "profile.jpg")
-            val b = BitmapFactory.decodeStream(FileInputStream(f))
-            click_image.setImageBitmap(b)
+            for(i in dirlist.indices){
+                if(i == 0){
+                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
+                    click_image.setImageBitmap(b)
+                }
+                else{
+                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
+                    click_image2.setImageBitmap(b)
+                }
+            }
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
