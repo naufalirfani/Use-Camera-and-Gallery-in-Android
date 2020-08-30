@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity() {
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 )
                 startActivityForResult(pickPhoto, 0)
+                dialog.dismiss()
             } else if (options[item].equals("Cancel")) {
                 dialog.dismiss()
             }
