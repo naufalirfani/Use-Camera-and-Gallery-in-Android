@@ -45,13 +45,28 @@ class MainActivity : AppCompatActivity() {
         builder.setTitle("Add Photo!")
         builder.setItems(options) { dialog, item ->
             if (options[item].equals("Take Photo")) {
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                val f = File(
-                    Environment.getExternalStorageDirectory(),
-                    "temp.jpg"
-                )
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f))
-                startActivityForResult(intent, 1)
+                Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                    // Ensure that there's a camera activity to handle the intent
+                    takePictureIntent.resolveActivity(packageManager)?.also {
+                        // Create the File where the photo should go
+                        val photoFile: File? = try {
+                            createImageFile()
+                        } catch (ex: IOException) {
+                            // Error occurred while creating the File
+                            null
+                        }
+                        // Continue only if the File was successfully created
+                        photoFile?.also {
+                            val photoURI: Uri = FileProvider.getUriForFile(
+                                this,
+                                "com.example.cameraapp.fileprovider",
+                                it
+                            )
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                            startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                        }
+                    }
+                }
                 galleryAddPic()
             } else if (options[item].equals("Choose from Gallery")) {
                 val pickPhoto = Intent(
@@ -64,28 +79,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         builder.show()
-//        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-//            // Ensure that there's a camera activity to handle the intent
-//            takePictureIntent.resolveActivity(packageManager)?.also {
-//                // Create the File where the photo should go
-//                val photoFile: File? = try {
-//                    createImageFile()
-//                } catch (ex: IOException) {
-//                    // Error occurred while creating the File
-//                    null
-//                }
-//                // Continue only if the File was successfully created
-//                photoFile?.also {
-//                    val photoURI: Uri = FileProvider.getUriForFile(
-//                        this,
-//                        "com.example.cameraapp.fileprovider",
-//                        it
-//                    )
-//                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-//                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
-//                }
-//            }
-//        }
     }
 
     lateinit var currentPhotoPath: String
