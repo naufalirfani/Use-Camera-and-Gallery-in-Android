@@ -126,10 +126,6 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         val imgFile = File(currentPhotoPath)
         when (requestCode) {
-            2 -> if (resultCode == Activity.RESULT_OK) {
-                val imageBitmap = data?.extras?.get("data") as Bitmap
-                click_image.setImageBitmap(imageBitmap)
-            }
             3 -> if (resultCode == Activity.RESULT_OK) {
                 val selectedImage = data?.data
                 click_image.setImageURI(selectedImage)
