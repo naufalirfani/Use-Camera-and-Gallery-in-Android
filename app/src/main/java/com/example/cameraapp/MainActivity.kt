@@ -27,6 +27,8 @@ import java.util.*
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
+    val photo = arrayListOf<Photo>()
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -171,17 +173,21 @@ class MainActivity : AppCompatActivity() {
         val dirlist = directory.listFiles()
         try {
             for(i in dirlist.indices){
-                if(i == 0){
-                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
-                    click_image.setImageBitmap(b)
-                }
-                else{
-                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
-                    click_image.setImageBitmap(b)
-                }
+                photo.add(Photo(BitmapFactory.decodeStream(FileInputStream(dirlist[i]))))
+//                if(i == 0){
+//                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
+//                    click_image.setImageBitmap(b)
+//                }
+//                else{
+//                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
+//                    click_image.setImageBitmap(b)
+//                }
             }
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
+        val adapter = PhotoAdapter(applicationContext,photo)
+        adapter.notifyDataSetChanged()
+        mRecyclerView.adapter = adapter
     }
 }
