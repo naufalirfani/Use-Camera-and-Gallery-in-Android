@@ -22,12 +22,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
-    val photo = arrayListOf<Photo>()
+    val photo = ArrayList<Photo>()
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             btn_camera.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.colorAccent);
         }
 
-        //loadImageFromStorage()
+        loadImageFromStorage()
     }
 
     val REQUEST_TAKE_PHOTO = 1
@@ -134,21 +135,25 @@ class MainActivity : AppCompatActivity() {
                 val imageStream = selectedImage?.let { contentResolver.openInputStream(it) }
                 val bitmap = BitmapFactory.decodeStream(imageStream)
                 click_image.setImageBitmap(bitmap)
+                photo.add(Photo(selectedImage))
             }
             1 -> if (resultCode == Activity.RESULT_OK) {
                 val imgFile = File(currentPhotoPath)
                 val myBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
                 click_image.setImageBitmap(myBitmap)
+                saveToInternalStorage(myBitmap)
             }
         }
     }
 
     private fun saveToInternalStorage(bitmapImage: Bitmap): String? {
+
+        val namajpg = getRandomString(6)
         val cw = ContextWrapper(applicationContext)
         // path to /data/data/yourapp/app_data/imageDir
         val directory = cw.getDir("imageDir", Context.MODE_PRIVATE)
         // Create imageDir
-        val mypath = File(directory, "profile2.jpg")
+        val mypath = File(directory, "$namajpg.jpg")
         var fos: FileOutputStream? = null
         try {
             fos = FileOutputStream(mypath)
@@ -166,6 +171,13 @@ class MainActivity : AppCompatActivity() {
         return directory.absolutePath
     }
 
+    fun getRandomString(length: Int) : String {
+        val allowedChars = ('A'..'Z') + ('a'..'z')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
+
     private fun loadImageFromStorage() {
         val cw = ContextWrapper(applicationContext)
         // path to /data/data/yourapp/app_data/imageDir
@@ -173,7 +185,6 @@ class MainActivity : AppCompatActivity() {
         val dirlist = directory.listFiles()
         try {
             for(i in dirlist.indices){
-                photo.add(Photo(BitmapFactory.decodeStream(FileInputStream(dirlist[i]))))
 //                if(i == 0){
 //                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
 //                    click_image.setImageBitmap(b)
@@ -186,8 +197,5 @@ class MainActivity : AppCompatActivity() {
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
-        val adapter = PhotoAdapter(applicationContext,photo)
-        adapter.notifyDataSetChanged()
-        mRecyclerView.adapter = adapter
     }
 }

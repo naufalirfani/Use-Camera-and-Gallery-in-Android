@@ -1,5 +1,5 @@
 package com.example.cameraapp
 
-import android.graphics.Bitmap
+import android.net.Uri
 
-data class Photo(val photo:Bitmap)
+data class Photo(val photo:Uri?)

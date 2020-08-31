@@ -23,7 +23,9 @@ class PhotoAdapter(private val context: Context, private val listPhoto: ArrayLis
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val photo = listPhoto[position]
-        holder.view.img_kdrama_photo.setImageBitmap(photo.photo)
+        Glide.with(holder.itemView.context)
+            .load(photo.photo)
+            .into(holder.view.img_kdrama_photo)
 
     }
 
