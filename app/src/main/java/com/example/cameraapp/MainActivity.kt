@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.Html
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -27,8 +28,6 @@ import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
-
-    val photo = ArrayList<Photo>()
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,13 +134,12 @@ class MainActivity : AppCompatActivity() {
                 val imageStream = selectedImage?.let { contentResolver.openInputStream(it) }
                 val bitmap = BitmapFactory.decodeStream(imageStream)
                 click_image.setImageBitmap(bitmap)
-                photo.add(Photo(selectedImage))
             }
             1 -> if (resultCode == Activity.RESULT_OK) {
                 val imgFile = File(currentPhotoPath)
                 val myBitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
                 click_image.setImageBitmap(myBitmap)
-                saveToInternalStorage(myBitmap)
+                //saveToInternalStorage(myBitmap)
             }
         }
     }
@@ -185,14 +183,14 @@ class MainActivity : AppCompatActivity() {
         val dirlist = directory.listFiles()
         try {
             for(i in dirlist.indices){
-//                if(i == 0){
-//                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
-//                    click_image.setImageBitmap(b)
-//                }
-//                else{
-//                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
-//                    click_image.setImageBitmap(b)
-//                }
+                if(i == 0){
+                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
+                    click_image.setImageBitmap(b)
+                }
+                else{
+                    val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
+                    click_image.setImageBitmap(b)
+                }
             }
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
