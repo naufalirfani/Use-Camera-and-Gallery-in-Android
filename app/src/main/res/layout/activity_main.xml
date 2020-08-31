@@ -32,12 +32,12 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/click_image"
                 android:layout_marginBottom="10dp"/>
-            <ImageView
-                android:layout_marginTop="20dp"
-                android:layout_width="wrap_content"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/mRecyclerView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/click_image2"
-                android:layout_marginBottom="10dp"/>
+                android:paddingTop="16dp"
+                android:layout_marginTop="82dp"/>
         </LinearLayout>
     </ScrollView>
 

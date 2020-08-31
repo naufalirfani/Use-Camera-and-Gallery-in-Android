@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else{
                     val b = BitmapFactory.decodeStream(FileInputStream(dirlist[i]))
-                    click_image2.setImageBitmap(b)
+                    click_image.setImageBitmap(b)
                 }
             }
         } catch (e: FileNotFoundException) {
