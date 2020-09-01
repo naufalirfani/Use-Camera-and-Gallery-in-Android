@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             btn_camera.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.colorAccent);
         }
 
-        loadImageFromStorage()
+        //loadImageFromStorage()
     }
 
     val REQUEST_TAKE_PHOTO = 1
